@@ -66,12 +66,22 @@ TEST(testUXmlNode, nodeName) {
     EXPECT_TRUE(node.getValue().empty());
 }
 
-TEST(testUXmlNode, nodeChildNotFound) {
+TEST(testUXmlNode, nodeChildNotFoundByName) {
     using namespace BlackCodex::uXml;
     
     BCuXmlNode nodeRoot = getTestNode();
 
     const BCuXmlNode& node = nodeRoot.getChild("test:childDoesNotExist");
+    EXPECT_TRUE(node.getName().empty());
+    EXPECT_TRUE(node.getValue().empty());
+}
+
+TEST(testUXmlNode, nodeChildNotFoundByPathInRoot) {
+    using namespace BlackCodex::uXml;
+    
+    BCuXmlNode nodeRoot = getTestNode();
+
+    const BCuXmlNode& node = nodeRoot.getChildByPath("test:thisNodeDoesNoExist/test:subNode");
     EXPECT_TRUE(node.getName().empty());
     EXPECT_TRUE(node.getValue().empty());
 }
