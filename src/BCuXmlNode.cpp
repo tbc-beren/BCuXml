@@ -48,44 +48,26 @@ const std::string& BCuXmlNode::getPropertyByName(const char* propname) const
     }
 }
 
-/*
-const char* BCuXmlNode::get_property(size_t index)
-{
-    auto it=this->mProperties.begin();
-
-    while(it!= this->mProperties.end() &&
-            index--!=0)
-    {
-        ++it;
-    }
-    // TODO: Review
-    return it==this->mProperties.end() ? nullptr : it->second.c_str();
-}
-const char* BCuXmlNode::get_property_name(size_t index)
-{
-    auto it=this->mProperties.begin();
-
-    while(it != mProperties.end() && index-- != 0)
-    {
-        ++it;
-    }
-
-    // TODO: Review
-    return it==this->mProperties.end() ? nullptr : it->first.c_str();
-}
-*/
-
-BCuXmlNode& BCuXmlNode::getChild(size_t index)
-{
+const BCuXmlNode& BCuXmlNode::getChild(size_t index) const {
     if (index >= mChildren.size()) {
         return getEmptyNode();
     }
 
-    xmlnodelist_iterator_t it=this->mChildren.begin();
+    auto it = mChildren.begin();
+    while( it != mChildren.end() && index--!=0) {
+        ++it;
+    }
 
-    while(it!= this->mChildren.end() &&
-            index--!=0)
-    {
+    return *it;
+}
+
+BCuXmlNode& BCuXmlNode::getChild(size_t index) {
+    if (index >= mChildren.size()) {
+        return getEmptyNode();
+    }
+
+    auto it = mChildren.begin();
+    while( it != mChildren.end() && index--!=0) {
         ++it;
     }
 
@@ -117,8 +99,7 @@ BCuXmlNode& BCuXmlNode::getChildByPath(const std::string& path)
 
     size_t      pos = path.find_first_of('/');
 
-    if (std::string::npos == pos)
-    {
+    if (std::string::npos == pos) {
         return getChild(path);
     }
 
@@ -127,10 +108,8 @@ BCuXmlNode& BCuXmlNode::getChildByPath(const std::string& path)
     std::string str(path);
     str = str.substr(pos+1);
 
-    while(it!= this->mChildren.end())
-    {
-        if (nodebase.compare(it->mName.c_str())==0)
-        {
+    while(it!= this->mChildren.end()) {
+        if (nodebase.compare(it->mName.c_str())==0) {
             return it->getChildByPath(str.c_str());
         }
 
@@ -141,14 +120,9 @@ BCuXmlNode& BCuXmlNode::getChildByPath(const std::string& path)
 }
 
 void BCuXmlNode::addProperty(const std::string& propName,
-                    const std::string& propValue)
-{
+                             const std::string& propValue) {
     mProperties[propName] = propValue;
 }
-
-//void addProperty(const BCXmlProp& prop) {
-//    this->mProperties[prop.getName()] = prop;
-//}
 
 void BCuXmlNode::clear() {
     this->mChildren.clear();

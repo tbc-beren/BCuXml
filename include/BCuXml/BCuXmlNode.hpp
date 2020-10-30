@@ -48,6 +48,7 @@ public:
     const std::string&  getPropertyByName(const char* propname) const;
     //const std::string&  getPropertyByIndex(size_t index);
     //const char*     get_property_name(size_t index);
+    const BCuXmlNode&   getChild(size_t index) const;
     BCuXmlNode&         getChild(size_t index);
     BCuXmlNode&         getChild(const std::string& tagName);
     BCuXmlNode&         getChildByPath(const std::string& path);

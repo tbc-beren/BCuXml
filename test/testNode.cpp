@@ -116,17 +116,18 @@ TEST(testUXmlNode, nodeChildByPathLevel2) {
 TEST(testUXmlNode, nodeChildWithProperties) {
     using namespace BlackCodex::uXml;
     
-    BCuXmlNode node = getTestNode();
+    BCuXmlNode mnode = getTestNode();
+    const BCuXmlNode& node = getTestNode();
 
     {
-        const auto& nodeLast = node.getLastNode();
+        const auto& nodeLast = mnode.getLastNode();
         EXPECT_EQ       ("test:subnode2", nodeLast.getName());
     }
 
     EXPECT_EQ       (2, node.getChildCount());
     EXPECT_EQ       (0, node.getPropertyCount());
 
-    const auto& node2 = node.getChild(1);
+    const BCuXmlNode& node2 = node.getChild(1);
     EXPECT_EQ       ("test:subnode2",   node2.getName());
     EXPECT_EQ       (2,                 node2.getPropertyCount());
     EXPECT_EQ       ("prop1value",      node2.getPropertyByName("prop1"));
@@ -136,4 +137,36 @@ TEST(testUXmlNode, nodeChildWithProperties) {
     const auto& node3 = node.getChild(2);
     EXPECT_TRUE(node3.getName().empty());
     EXPECT_TRUE(node3.getValue().empty());
+}
+
+TEST(testUXmlNode, nodeChildAdd) {
+    using namespace BlackCodex::uXml;
+    
+    BCuXmlNode mnode = getTestNode();
+    const BCuXmlNode& node = mnode;
+
+    {
+        const auto& nodeLast = mnode.getLastNode();
+        EXPECT_EQ       ("test:subnode2", nodeLast.getName());
+
+        mnode.getChild(1).addNode("test:grandchild");       // getChild() on mutable node
+        EXPECT_TRUE(mnode.getChild(2).getName().empty());   // getChild() [Non-existing] on mutable node
+    }
+
+    EXPECT_EQ       (2, node.getChildCount());
+    EXPECT_EQ       (0, node.getPropertyCount());
+
+    const BCuXmlNode& node2 = node.getChild(1);
+    EXPECT_EQ       ("test:subnode2",   node2.getName());
+    EXPECT_EQ       (2,                 node2.getPropertyCount());
+    EXPECT_EQ       ("prop1value",      node2.getPropertyByName("prop1"));
+    EXPECT_EQ       ("prop2value",      node2.getPropertyByName("prop2"));
+    EXPECT_TRUE     (node2.getPropertyByName("prop3").empty());
+
+    const auto& node3 = node2.getChild(0);
+    EXPECT_EQ       ("test:grandchild", node3.getName());
+
+    const auto& node4 = node3.getChild(0);
+    EXPECT_TRUE(node4.getName().empty());
+    EXPECT_TRUE(node4.getValue().empty());
 }
